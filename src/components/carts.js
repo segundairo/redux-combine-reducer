@@ -1,18 +1,48 @@
 import React, { useEffect } from "react";
 import CartItems from "./cartItems";
 import styled from "styled-components";
-
-import { connect, useDispatch, useSelector } from "react-redux";
-import { clearCart, computeCart } from "../redux/cart/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { clearCart, computeCart, fetchCart } from "../redux/cart/actions";
+import { BeatLoader } from "react-spinners";
 
 const Carts = () => {
   const dispatch = useDispatch();
-  const { cart, totalAmount } = useSelector((state) => state);
+  const { cart, totalAmount, loading, error } = useSelector((state) => state);
+
+  useEffect(() => {
+    const loadDelay = setTimeout(() => {
+      dispatch(fetchCart());
+      
+    }, 2000);
+   return ()=> {
+     clearTimeout(loadDelay)
+   }
+  }, []);
+
 
   useEffect(() => {
     dispatch(computeCart());
   }, [cart]);
-  if (cart.length === 0) {
+
+  if (loading) {
+    return (
+      <Wrapper>
+        <div className="loading">
+        <BeatLoader className="loading" size={50} color={"#123abc"} />
+
+        </div>
+      </Wrapper>
+    );
+  }
+  if (error) {
+    return (
+      <Wrapper>
+        <h2 className="empty">{error}</h2>
+      </Wrapper>
+    );
+  }
+
+  if (!loading && cart.length === 0) {
     return (
       <Wrapper>
         <h2 className="empty">No Item in Cart</h2>
@@ -49,11 +79,12 @@ const Wrapper = styled.section`
     margin-bottom: 2rem;
   }
 
-  .empty {
+  .empty, .loading {
     padding-top: 10rem;
     text-align: center;
     font-size: 3rem;
   }
+
   .summary {
     display: flex;
     justify-content: space-between;
@@ -72,16 +103,4 @@ const Wrapper = styled.section`
   }
 `;
 
-// const mapStateToProps = (state) => {
-//   return {
-//     cart: state.cart,
-//     total: state.totalAmount,
-//   };
-// };
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     clearCart: () => dispatch(clearCart()),
-//     computeCart: () => dispatch(computeCart()),
-//   };
-// };
 export default Carts;

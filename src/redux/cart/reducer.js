@@ -1,9 +1,11 @@
 import * as actions from "./actiontype";
-import cart from "../../data/data";
+
 const initialState = {
-  cart,
+  cart: [],
   totalQty: 0,
   totalAmount: 0,
+  loading: true,
+  error: "",
 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -17,12 +19,14 @@ const reducer = (state = initialState, action) => {
       return { ...state, cart: tempCart };
     }
     case actions.DECREASE_ITEM: {
-      let tempCart = state.cart.map((item) => {
-        if (item.id === action.payload.id) {
-          return { ...item, qty: item.qty - 1 };
-        }
-        return item;
-      }).filter((el) => el.qty !== 0);;
+      let tempCart = state.cart
+        .map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, qty: item.qty - 1 };
+          }
+          return item;
+        })
+        .filter((el) => el.qty !== 0);
       return { ...state, cart: tempCart };
     }
     case actions.REMOVE_ITEM: {
@@ -46,9 +50,17 @@ const reducer = (state = initialState, action) => {
       );
       return { ...state, totalQty, totalAmount: totalAmount.toLocaleString() };
     }
+    case actions.FETCH_ITEM_REQUEST:
+      return { ...state, loading: true, error: '' };
+    case actions.FETCH_ITEM_SUCCESS:
+      return { ...state, cart: action.payload.cart, loading: false, error: '' };
+    case actions.FETCH_ITEM_FAILURE:
+      return { ...state, cart: [], loading: false, error: action.payload.error };
+
     default:
       return state;
   }
 };
+
 
 export default reducer;

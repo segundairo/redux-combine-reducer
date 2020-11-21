@@ -8,8 +8,8 @@ const CartItems = ({ id, title, price, img, qty }) => {
   const dispatch = useDispatch();
   return (
     <Wrapper>
-      {/* <img src={img} alt={title} /> */}
-      <span></span>
+      <img src={img} alt={title} />
+      {/* <span></span> */}
       <div>
         <h4>{title}</h4>
         <h5>${price}</h5>
@@ -63,9 +63,14 @@ const Wrapper = styled.div`
   }
   h4 {
     letter-spacing: 1px;
+    font-weight: 500;
+    font-size: 1.2rem;
   }
   h5 {
-    font-weight: 300;
+    font-size: 1rem;
+    color: #888785;
+    font-weight: 500;
+    letter-spacing: 1px;
   }
   .btn-remove {
     margin-top: 10px;
